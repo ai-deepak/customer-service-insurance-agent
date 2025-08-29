@@ -38,7 +38,18 @@ export class AdminService {
   }
 
   async deleteDocument(id: string): Promise<void> {
-    this.logger.log(`Document deleted: ${id}`);
-    // Implement actual deletion logic
+    try {
+      // Call orchestrator deletion endpoint
+      await axios.delete(`${this.orchestratorUrl}/documents/${id}`, {
+        headers: {
+          'X-Admin-Secret': this.adminSecret,
+        },
+      });
+
+      this.logger.log(`Document deleted: ${id}`);
+    } catch (error: any) {
+      this.logger.error(`Error deleting document: ${error?.message ?? String(error)}`);
+      throw error;
+    }
   }
 }

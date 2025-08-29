@@ -8,6 +8,7 @@ import { ChatModule } from './chat/chat.module';
 import { ClaimsModule } from './claims/claims.module';
 import { HealthController } from './health.controller';
 import { InsuranceModule } from './insurance/insurance.module';
+import { MetricsModule } from './metrics/metrics.module';
 import { PremiumModule } from './premium/premium.module';
 
 @Module({
@@ -34,6 +35,7 @@ import { PremiumModule } from './premium/premium.module';
     InsuranceModule,
     PremiumModule,
     AdminModule,
+    MetricsModule,
   ],
   controllers: [HealthController],
   providers: [

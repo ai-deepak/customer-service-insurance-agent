@@ -13,6 +13,18 @@ export class ChatService {
   }
 
   async processMessage(chatDto: ChatMessageDto, userRole: string): Promise<ChatResponseDto> {
+    const startTime = Date.now();
+    const sessionId = chatDto.session_id || 'n/a';
+    
+    this.logger.log(JSON.stringify({
+      type: 'orchestrator_request_start',
+      timestamp: new Date().toISOString(),
+      sessionId,
+      userRole,
+      messageLength: chatDto.message?.length || 0,
+      orchestratorUrl: this.orchestratorUrl,
+    }));
+
     try {
       const response = await axios.post<ChatResponseDto>(`${this.orchestratorUrl}/route`, {
         message: chatDto.message,
@@ -20,12 +32,38 @@ export class ChatService {
         user_role: userRole,
       });
 
-      this.logger.log(`Chat processed for session: ${chatDto.session_id ?? 'n/a'}`);
+      const duration = Date.now() - startTime;
+      
+      this.logger.log(JSON.stringify({
+        type: 'orchestrator_request_success',
+        timestamp: new Date().toISOString(),
+        sessionId,
+        userRole,
+        duration_ms: duration,
+        responseStatus: response.status,
+        messagesCount: response.data?.messages?.length || 0,
+        actionsCount: response.data?.actions?.length || 0,
+        hasCards: Object.keys(response.data?.cards || {}).length > 0,
+      }));
+
       return response.data;
     } catch (error: any) {
-      this.logger.error(`Error processing chat: ${error?.message ?? String(error)}`);
-      this.logger.error(`Orchestrator URL: ${this.orchestratorUrl}`);
-      this.logger.error(`Full error:`, error);
+      const duration = Date.now() - startTime;
+      
+      this.logger.error(JSON.stringify({
+        type: 'orchestrator_request_error',
+        timestamp: new Date().toISOString(),
+        sessionId,
+        userRole,
+        duration_ms: duration,
+        error: {
+          message: error?.message || 'Unknown error',
+          status: error?.response?.status,
+          statusText: error?.response?.statusText,
+          orchestratorUrl: this.orchestratorUrl,
+        },
+      }));
+      
       throw error;
     }
   }

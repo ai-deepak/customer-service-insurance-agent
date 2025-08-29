@@ -5,6 +5,8 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { HttpErrorFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { MetricsInterceptor } from './common/interceptors/metrics.interceptor';
+import { MetricsService } from './metrics/metrics.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -33,6 +35,13 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor());
   app.useGlobalFilters(new HttpErrorFilter());
 
+  // Conditionally enable metrics
+  const enableMetrics = process.env.ENABLE_PROMETHEUS === 'true' || process.env.NODE_ENV === 'development';
+  if (enableMetrics) {
+    const metricsService = app.get(MetricsService);
+    app.useGlobalInterceptors(new MetricsInterceptor(metricsService));
+  }
+
   const config = new DocumentBuilder()
     .setTitle('Insurance Assistant API')
     .setDescription('AI-powered insurance customer service API')
@@ -49,6 +58,9 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
   logger.log(`Application is running on: http://localhost:${port}`);
   logger.log(`Swagger documentation: http://localhost:${port}/docs`);
+  if (enableMetrics) {
+    logger.log(`Metrics endpoint: http://localhost:${port}/metrics`);
+  }
 }
 
 bootstrap();
