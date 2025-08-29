@@ -46,6 +46,7 @@ notebooks/
 experiment-assistant/
 # Virtual environments
 presentation_deck.md
+plan.md
 .venv/
 venv/
 ENV/
