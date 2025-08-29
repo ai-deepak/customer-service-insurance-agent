@@ -1,0 +1,218 @@
+[
+    {
+        "content": "Gold Plan policy features: Maximum collision coverage limit of $50,000 for vehicle damage protection. Includes comprehensive roadside assistance program with 24/7 towing service. Customer responsibility amount (deductible) set at $500 per claim incident.",
+        "metadata": {
+            "doc_id": "POLICY_001",
+            "source_type": "Policy",
+            "policy_tier": "Gold",
+            "policy_number": "GOLD-2024-001",
+            "tags": [
+                "coverage",
+                "deductible",
+                "roadside"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "Silver Plan policy specifications: Collision coverage maximum benefit amount of $30,000 for accident-related vehicle repairs. Roadside assistance services are not included in this tier. Out-of-pocket deductible requirement of $750 applies to each claim submission.",
+        "metadata": {
+            "doc_id": "POLICY_002",
+            "source_type": "Policy",
+            "policy_number": "SILVER-2024-001",
+            "policy_tier": "Silver",
+            "tags": [
+                "coverage",
+                "deductible"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "Platinum Plan premium coverage details: Comprehensive collision protection up to $100,000 maximum coverage limit. Premium roadside assistance program included with nationwide coverage. Rental car reimbursement benefit included for covered claims. Low deductible amount of $250 per incident for policyholder cost-sharing.",
+        "metadata": {
+            "doc_id": "POLICY_003",
+            "source_type": "Policy",
+            "policy_number": "PLATINUM-2024-001",
+            "policy_tier": "Platinum",
+            "tags": [
+                "coverage",
+                "deductible",
+                "rental car"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "To file a vehicle damage claim, collect your policy ID, vehicle details, and a description of the incident. Take photos of the damage and submit online or by calling customer support.",
+        "metadata": {
+            "doc_id": "CLAIM_001",
+            "source_type": "ClaimStep",
+            "tags": [
+                "claim",
+                "vehicle damage",
+                "steps"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "When checking claim status, you must provide your claim ID (up to 10 characters). You can check status online or through customer support.",
+        "metadata": {
+            "doc_id": "CLAIM_002",
+            "source_type": "ClaimStep",
+            "tags": [
+                "claim status",
+                "tracking"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "What documents are needed to file a claim? You need your policy ID, a description of the incident, and supporting evidence such as photos or police reports.",
+        "metadata": {
+            "doc_id": "FAQ_001",
+            "source_type": "FAQ",
+            "tags": [
+                "claim",
+                "documents"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "How long does it take to process a claim? Most claims are processed within 7–10 business days depending on complexity.",
+        "metadata": {
+            "doc_id": "FAQ_002",
+            "source_type": "FAQ",
+            "tags": [
+                "claim",
+                "processing time"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "Can I cancel my policy anytime? Yes, you may cancel anytime, but a cancellation fee may apply depending on the policy type.",
+        "metadata": {
+            "doc_id": "FAQ_003",
+            "source_type": "FAQ",
+            "tags": [
+                "policy",
+                "cancellation"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "Does roadside assistance include towing? Yes, roadside assistance includes towing up to 25 miles under the Gold and Platinum plans.",
+        "metadata": {
+            "doc_id": "FAQ_004",
+            "source_type": "FAQ",
+            "tags": [
+                "roadside assistance",
+                "towing"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "What is the deductible for the Silver plan? The deductible is $750 per claim.",
+        "metadata": {
+            "doc_id": "FAQ_005",
+            "source_type": "FAQ",
+            "policy_tier": "Silver",
+            "tags": [
+                "deductible",
+                "policy"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "What is the deductible for the Gold plan? The deductible is $500 per claim.",
+        "metadata": {
+            "doc_id": "FAQ_006",
+            "source_type": "FAQ",
+            "policy_tier": "Gold",
+            "tags": [
+                "deductible",
+                "policy"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "Premium calculation depends on your coverage. Increasing coverage results in a higher premium. For example, raising collision coverage from $50,000 to $80,000 increases the premium from $500 to $760 per period.",
+        "metadata": {
+            "doc_id": "FAQ_007",
+            "source_type": "FAQ",
+            "tags": [
+                "premium",
+                "coverage",
+                "calculation"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "Claim IDs must be non-empty, alphanumeric, and no longer than 10 characters.",
+        "metadata": {
+            "doc_id": "CLAIM_003",
+            "source_type": "ClaimRule",
+            "tags": [
+                "claim",
+                "validation"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "User ID: U12345 has Gold Plan policy POLICY_001 with policy number GOLD-2024-001",
+        "metadata": {
+            "doc_id": "USER_POLICY_001",
+            "source_type": "UserPolicy",
+            "user_id": "U12345",
+            "policy_id": "POLICY_001",
+            "policy_number": "GOLD-2024-001",
+            "tags": [
+                "user",
+                "policy",
+                "association"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "User ID: U67890 has Silver Plan policy POLICY_002 with policy number SILVER-2024-001",
+        "metadata": {
+            "doc_id": "USER_POLICY_002",
+            "source_type": "UserPolicy",
+            "user_id": "U67890",
+            "policy_id": "POLICY_002",
+            "policy_number": "SILVER-2024-001",
+            "tags": [
+                "user",
+                "policy",
+                "association"
+            ],
+            "version": 1
+        }
+    },
+    {
+        "content": "User ID: U11111 has Platinum Plan policy POLICY_003 with policy number PLATINUM-2024-001",
+        "metadata": {
+            "doc_id": "USER_POLICY_003",
+            "source_type": "UserPolicy",
+            "user_id": "U11111",
+            "policy_id": "POLICY_003",
+            "policy_number": "PLATINUM-2024-001",
+            "tags": [
+                "user",
+                "policy",
+                "association"
+            ],
+            "version": 1
+        }
+    }
+]

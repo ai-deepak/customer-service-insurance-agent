@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+pydantic
+python-multipart
+agents
+openai
+psycopg2-binary
+httpx
+numpy
+openai-agents
+# Phoenix Tracing
+arize-phoenix-otel
+openinference-instrumentation-openai-agents
+langchain-openai

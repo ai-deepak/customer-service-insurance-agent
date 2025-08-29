@@ -1,0 +1,75 @@
+﻿version: "3.8"
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: insurance
+      POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+om  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: dev
+      PORT: 3000
+      JWT_SECRET: supersecret
+      ORCHESTRATOR_URL: http://orchestrator:8000
+      DB_URL: postgres://postgres:postgres@db:5432/insurance
+      LOG_LEVEL: info
+      ADMIN_SHARED_SECRET: change-me
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+
+  orchestrator:
+    build:
+      context: .
+      dockerfile: apps/orchestrator/Dockerfile
+    environment:
+      ORCH_PORT: 8000
+      DB_URL: postgres://postgres:postgres@db:5432/insurance
+      EMBEDDING_MODEL: text-embedding-3-small
+      CHAT_MODEL: gpt-4o-mini
+      NEST_API_URL: http://api:3000
+      ADMIN_SHARED_SECRET: change-me
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      PHOENIX_ENABLED: ${PHOENIX_ENABLED:-true}
+      PHOENIX_PROJECT_NAME: insurance-agent
+      PHOENIX_COLLECTOR_ENDPOINT: http://phoenix:6006
+    depends_on:
+      db:
+        condition: service_healthy
+      phoenix:
+        condition: service_started
+    ports:
+      - "8000:8000"
+
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    ports:
+      - "6006:6006"
+    environment:
+      - PHOENIX_WORKING_DIR=/app/data
+    volumes:
+      - phoenix_data:/app/data
+
+volumes:
+  postgres_data:
+  phoenix_data:
