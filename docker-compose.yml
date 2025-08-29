@@ -20,7 +20,7 @@ services:
       timeout: 5s
       retries: 5
 
-  api:
+om  api:
     build:
       context: ./apps/api
       dockerfile: Dockerfile
@@ -50,11 +50,26 @@ services:
       NEST_API_URL: http://api:3000
       ADMIN_SHARED_SECRET: change-me
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      PHOENIX_ENABLED: ${PHOENIX_ENABLED:-true}
+      PHOENIX_PROJECT_NAME: insurance-agent
+      PHOENIX_COLLECTOR_ENDPOINT: http://phoenix:6006
     depends_on:
       db:
         condition: service_healthy
+      phoenix:
+        condition: service_started
     ports:
       - "8000:8000"
 
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    ports:
+      - "6006:6006"
+    environment:
+      - PHOENIX_WORKING_DIR=/app/data
+    volumes:
+      - phoenix_data:/app/data
+
 volumes:
   postgres_data:
+  phoenix_data:

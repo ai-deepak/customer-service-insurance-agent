@@ -45,6 +45,7 @@ MANIFEST
 notebooks/
 experiment-assistant/
 # Virtual environments
+presentation_deck.md
 .venv/
 venv/
 ENV/

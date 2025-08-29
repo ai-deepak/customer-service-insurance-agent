@@ -1,6 +1,6 @@
 [
     {
-        "content": "Gold Plan: Collision Coverage up to $50,000. Roadside Assistance included. Deductible is $500.",
+        "content": "Gold Plan policy features: Maximum collision coverage limit of $50,000 for vehicle damage protection. Includes comprehensive roadside assistance program with 24/7 towing service. Customer responsibility amount (deductible) set at $500 per claim incident.",
         "metadata": {
             "doc_id": "POLICY_001",
             "source_type": "Policy",
@@ -15,7 +15,7 @@
         }
     },
     {
-        "content": "Silver Plan: Collision Coverage up to $30,000. Roadside Assistance not included. Deductible is $750.",
+        "content": "Silver Plan policy specifications: Collision coverage maximum benefit amount of $30,000 for accident-related vehicle repairs. Roadside assistance services are not included in this tier. Out-of-pocket deductible requirement of $750 applies to each claim submission.",
         "metadata": {
             "doc_id": "POLICY_002",
             "source_type": "Policy",
@@ -29,7 +29,7 @@
         }
     },
     {
-        "content": "Platinum Plan: Collision Coverage up to $100,000. Roadside Assistance included. Rental Car Reimbursement included. Deductible is $250.",
+        "content": "Platinum Plan premium coverage details: Comprehensive collision protection up to $100,000 maximum coverage limit. Premium roadside assistance program included with nationwide coverage. Rental car reimbursement benefit included for covered claims. Low deductible amount of $250 per incident for policyholder cost-sharing.",
         "metadata": {
             "doc_id": "POLICY_003",
             "source_type": "Policy",

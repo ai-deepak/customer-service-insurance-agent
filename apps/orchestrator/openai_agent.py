@@ -9,6 +9,10 @@ from typing import Optional, Dict, Any, List, Tuple
 import json
 import re
 
+# Initialize Phoenix tracing early
+from phoenix_tracing import setup_phoenix_tracing, log_agent_interaction, PHOENIX_PROJECT_NAME
+_tracer_provider = setup_phoenix_tracing()
+
 # ---------- OpenAI Agents SDK ----------
 from agents import (
     Agent,
@@ -409,13 +413,18 @@ knowledge_base_agent = Agent(
     name=KNOWLEDGE_BASE,
     instructions=(
         "You help users find information about available policies, coverage options, and general insurance questions. "
-        "Use search_knowledge_base_tool to find relevant information from our knowledge base. "
-        "Provide helpful, accurate information based on the search results."
-        "\n\nDEBUG: You are the KnowledgeBase_Agent. Log when you start working and use search_knowledge_base_tool."
+        "CRITICAL: You MUST ALWAYS call search_knowledge_base_tool first for every question. "
+        "NEVER answer questions directly from your training data. "
+        "ONLY provide information that comes from the search_knowledge_base_tool results. "
+        "If the search returns no results, tell the user you couldn't find that information in the knowledge base. "
+        "Always base your answers strictly on the returned search results."
+        "\n\nDEBUG: You are the KnowledgeBase_Agent. You MUST use search_knowledge_base_tool for every query."
     ),
     tools=[search_knowledge_base_tool],
+    # Force the agent to use the search tool
+    tool_use_behavior=StopAtTools(stop_at_tool_names=["search_knowledge_base_tool"]),
     model=MODEL,
-    model_settings=ModelSettings(temperature=0.3),
+    model_settings=ModelSettings(temperature=0.1),  # Lower temperature for more deterministic behavior
 )
 
 # =========================
@@ -506,9 +515,21 @@ async def run_turn(user_text: str, session: SQLiteSession, ctx: AppContext):
         print(f"DEBUG: Running orchestrator with text: '{user_text}'")
         print(f"DEBUG: Orchestrator agent name: {orchestrator_agent.name}")
         print(f"DEBUG: Orchestrator handoffs: {[agent.name for agent in orchestrator_agent.handoffs]}")
+        
+        # Run the agent with Phoenix tracing
         result = await Runner.run(orchestrator_agent, user_text, session=session, context=ctx)
+        
         print(f"DEBUG: Orchestrator result type: {type(result)}")
         print(f"DEBUG: Orchestrator final_output: {result.final_output}")
+        
+        # Log to Phoenix for additional insights
+        session_id = getattr(session, 'session_id', 'unknown')
+        log_agent_interaction(
+            session_id=session_id,
+            agent_name=orchestrator_agent.name,
+            user_message=user_text,
+            response=str(result.final_output)
+        )
     except AuthenticationError:
         return "Auth error: OPENAI_API_KEY invalid or missing."
     except APIConnectionError as e:
@@ -602,6 +623,33 @@ async def run_turn(user_text: str, session: SQLiteSession, ctx: AppContext):
             "ui": ui_block
         })
         print(f"DEBUG: Returning claim status structured response: {response}")
+        return response
+
+    # --- KNOWLEDGE BASE: Special handling to ensure KB usage ---
+    kb_data = None
+    for tr in tool_results:
+        name = getattr(tr, "tool_name", "") or ""
+        output = getattr(tr, "output", None)
+        if name == "search_knowledge_base_tool" and isinstance(output, dict) and not output.get("error"):
+            kb_data = output
+            break
+
+    if kb_data:
+        # Return structured JSON response with knowledge base results
+        ui_block = {"type": "knowledge_base", "data": kb_data}
+        
+        # Create a user-friendly message based on the results
+        results = kb_data.get("results", [])
+        if results and results[0] != "I couldn't find relevant information in our knowledge base.":
+            message = f"Found information in our knowledge base about: {kb_data.get('query', 'your question')}"
+        else:
+            message = "I couldn't find that information in our knowledge base."
+            
+        response = json.dumps({
+            "message": message,
+            "ui": ui_block
+        })
+        print(f"DEBUG: Returning knowledge base structured response: {response}")
         return response
 
     # Build UI block for policy details and claim status
