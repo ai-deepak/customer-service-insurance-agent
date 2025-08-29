@@ -7,12 +7,14 @@ import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { ClaimsModule } from './claims/claims.module';
 import { HealthController } from './health.controller';
+import { InsuranceModule } from './insurance/insurance.module';
 import { PremiumModule } from './premium/premium.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['../../.env', '.env'],
     }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
@@ -29,6 +31,7 @@ import { PremiumModule } from './premium/premium.module';
     AuthModule,
     ChatModule,
     ClaimsModule,
+    InsuranceModule,
     PremiumModule,
     AdminModule,
   ],

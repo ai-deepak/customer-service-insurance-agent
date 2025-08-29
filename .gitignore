@@ -43,7 +43,7 @@ wheels/
 *.egg
 MANIFEST
 notebooks/
-
+experiment-assistant/
 # Virtual environments
 .venv/
 venv/

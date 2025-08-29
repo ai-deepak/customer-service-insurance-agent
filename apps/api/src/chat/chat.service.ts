@@ -9,7 +9,7 @@ export class ChatService {
   private readonly orchestratorUrl: string;
 
   constructor(private configService: ConfigService) {
-    this.orchestratorUrl = this.configService.get<string>('ORCHESTRATOR_URL');
+    this.orchestratorUrl = this.configService.get<string>('ORCHESTRATOR_URL') || 'http://localhost:8001';
   }
 
   async processMessage(chatDto: ChatMessageDto, userRole: string): Promise<ChatResponseDto> {
@@ -24,6 +24,8 @@ export class ChatService {
       return response.data;
     } catch (error: any) {
       this.logger.error(`Error processing chat: ${error?.message ?? String(error)}`);
+      this.logger.error(`Orchestrator URL: ${this.orchestratorUrl}`);
+      this.logger.error(`Full error:`, error);
       throw error;
     }
   }
