@@ -362,15 +362,19 @@ claim_status_agent = Agent(
     name=CLAIM_STATUS,
     instructions=(
         "You help users check claim status. "
-        "Collect a 'claim_id' (e.g., 98765) if missing, then call get_claim_status_tool. "
+        "1) Collect a 'claim_id' (e.g., 98765) if missing. "
+        "2) Once you have the claim_id, ask for confirmation: 'Can you please confirm the claim ID {claim_id}?' "
+        "3) Wait for user confirmation (yes, sure, ok, anything positive). "
+        "4) Only after confirmation, call get_claim_status_tool with the confirmed claim_id. "
+        "5) CRITICAL: After calling get_claim_status_tool, you MUST stop immediately and let the orchestrator handle the response formatting. Do NOT provide any additional text, formatting, or explanation."
         "Keep replies concise; do not invent IDs."
         "\n\nDEBUG: You are the ClaimStatus_Agent. Log when you start working."
     ),
     tools=[get_claim_status_tool],
-    # Stop after the tool so the server can emit structured UI (ClaimStatusTable)
+    # Force stop after tool to ensure clean data return
     tool_use_behavior=StopAtTools(stop_at_tool_names=["get_claim_status_tool"]),
     model=MODEL,
-    model_settings=ModelSettings(temperature=0.2),
+    model_settings=ModelSettings(temperature=0.0),  # Lower temperature for more deterministic behavior
 )
 
 submit_claim_agent = Agent(
@@ -580,6 +584,25 @@ async def run_turn(user_text: str, session: SQLiteSession, ctx: AppContext):
             return premium_sentence
         # if somehow sentence failed, fall back to JSON
         return json.dumps(premium_expected_json or {}, indent=2)
+
+    # --- CLAIM STATUS: Special handling to ensure clean JSON response ---
+    claim_status_data = None
+    for tr in tool_results:
+        name = getattr(tr, "tool_name", "") or ""
+        output = getattr(tr, "output", None)
+        if name == "get_claim_status_tool" and isinstance(output, dict) and not output.get("error"):
+            claim_status_data = output
+            break
+
+    if claim_status_data:
+        # Return structured JSON response for frontend to parse
+        ui_block = {"type": "claim_status", "data": claim_status_data}
+        response = json.dumps({
+            "message": f"Found claim status for claim ID {claim_status_data.get('claim_id', 'N/A')}.",
+            "ui": ui_block
+        })
+        print(f"DEBUG: Returning claim status structured response: {response}")
+        return response
 
     # Build UI block for policy details and claim status
     ui_block: Optional[Dict[str, Any]] = None

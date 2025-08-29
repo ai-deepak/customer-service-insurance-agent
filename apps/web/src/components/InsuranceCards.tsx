@@ -52,6 +52,46 @@ export type PremiumCalculation = {
   };
 };
 
+// ---------------------------------------------------------------------------
+// Confirmation Card
+// ---------------------------------------------------------------------------
+export function ConfirmationCard({
+  message,
+  onConfirm,
+  onCancel,
+}: {
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <div className="border-b bg-gray-50 px-4 py-3">
+        <div className="text-sm font-semibold text-gray-800">
+          Confirmation Required
+        </div>
+      </div>
+      <div className="p-4">
+        <div className="mb-4 text-sm text-gray-700">{message}</div>
+        <div className="flex gap-3">
+          <button
+            onClick={onConfirm}
+            className="flex-1 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors"
+          >
+            Yes, Confirm
+          </button>
+          <button
+            onClick={onCancel}
+            className="flex-1 rounded-lg bg-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-400 transition-colors"
+          >
+            No, Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function PremiumCalculationCard({
   data,
   title,

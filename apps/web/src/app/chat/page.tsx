@@ -2,6 +2,7 @@
 
 import {
   ClaimStatusTable,
+  ConfirmationCard,
   KnowledgeBaseCard,
   PolicySummaryCard,
   PremiumCalculationCard,
@@ -324,7 +325,7 @@ export default function ChatPage() {
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="w-full space-y-4">
             {messages.map((m) => (
-              <MessageBubble key={m.id} msg={m} />
+              <MessageBubble key={m.id} msg={m} onSend={send} />
             ))}
             {busy && (
               <div className="flex gap-2 p-2 text-sm text-gray-500">
@@ -413,7 +414,13 @@ export default function ChatPage() {
   );
 }
 
-function MessageBubble({ msg }: { msg: ChatMessage }) {
+function MessageBubble({
+  msg,
+  onSend,
+}: {
+  msg: ChatMessage;
+  onSend: (text: string) => void;
+}) {
   const isUser = msg.role === "user";
   const isSystem = msg.role === "system";
 
@@ -544,6 +551,23 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
         {msg.ui?.type === "premium_calculation" && (
           <div className="mt-3">
             <PremiumCalculationCard data={msg.ui.data} />
+          </div>
+        )}
+
+        {/* Confirmation Card - for claim status confirmation */}
+        {msg.content.includes("Can you please confirm the claim ID") && (
+          <div className="mt-3">
+            <ConfirmationCard
+              message={msg.content}
+              onConfirm={() => {
+                // Actually send "yes" as a message
+                onSend("yes");
+              }}
+              onCancel={() => {
+                // Send "no" as a message
+                onSend("no");
+              }}
+            />
           </div>
         )}
 
